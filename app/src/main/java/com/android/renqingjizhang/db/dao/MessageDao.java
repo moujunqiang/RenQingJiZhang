@@ -33,8 +33,11 @@ public interface MessageDao {
     @Query("select * from messagebean")
     List<MessageBean> queryAllMessage();
 
-    @Query("select * from messagebean where year=:year")
+    @Query("select * from messagebean where year=:year and type ='随礼'")
     List<MessageBean> queryAllMessage(String year);
+
+    @Query("select * from messagebean where type ='收礼'")
+    List<MessageBean> queryInAllMessage();
 
     @Delete
     int deleteMessage(MessageBean messageBean);

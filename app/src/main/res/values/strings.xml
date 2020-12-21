@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">RenQingJiZhang</string>
     <string-array name="note_type">
+        <item>随礼</item>
+        <item>收礼</item>
+    </string-array>
+    <string-array name="reason_type">
         <item>结婚大喜</item>
         <item>新造华庭</item>
         <item>金榜题名</item>

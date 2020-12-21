@@ -75,8 +75,9 @@ public class OutFragment extends Fragment {
         for (int i = 0; i < integers.size(); i++) {
             List<BaseNode> secondNodeList = new ArrayList<>();
             List<MessageBean> messageBeans1 = messageDao.queryAllMessage(integers.get(i) + "");
+            if (messageBeans1.size() == 0) continue;
             for (int n = 0; n < messageBeans1.size(); n++) {
-                secondNodeList.add(messageBeans1.get(i));
+                secondNodeList.add(messageBeans1.get(n));
             }
             FirstMode entity = new FirstMode(secondNodeList, integers.get(i) + "", messageBeans1.size() + "");
 

@@ -33,7 +33,7 @@ public class EditActivity extends AppCompatActivity {
     private EditText et_new_money;
 
     private TextView tv_time;
-    private Spinner spinner;
+    private Spinner spinner, typeSpinner;
     private MessageDao noteDao;
     private MessageBean note;
     private Long myID;
@@ -41,6 +41,8 @@ public class EditActivity extends AppCompatActivity {
     private String myContent;
     private String myCreate_time;
     private String myType;
+    private String myReason;
+
     private String myMoney;
     private Calendar calendar;
     private int flag;//区分是新建还是修改
@@ -103,7 +105,8 @@ public class EditActivity extends AppCompatActivity {
         et_new_content = (EditText) findViewById(R.id.et_new_content);
         et_new_money = (EditText) findViewById(R.id.et_new_money);
         tv_time = (TextView) findViewById(R.id.tv_remindtime);
-        spinner = (Spinner) findViewById(R.id.type_select);
+        spinner = (Spinner) findViewById(R.id.reason_select);
+        typeSpinner = (Spinner) findViewById(R.id.type_select);
 
         Intent intent = getIntent();
         flag = intent.getIntExtra("flag", 0);//0新建，1编辑
@@ -119,10 +122,17 @@ public class EditActivity extends AppCompatActivity {
             myContent = note.getDesc();
             myCreate_time = note.getCreateTime();
             myType = note.getType();
+            myReason = note.getReason();
+
             myMoney = note.getMoney();
             setTitle("编辑笔记");
+            for (int i = 0; i < 2; i++) {
+                if (typeSpinner.getItemAtPosition(i).toString().equals(myType)) {
+                    typeSpinner.setSelection(i);
+                }
+            }
             for (int i = 0; i < 5; i++) {
-                if (spinner.getItemAtPosition(i).toString().equals(myType)) {
+                if (spinner.getItemAtPosition(i).toString().equals(myReason)) {
                     spinner.setSelection(i);
                 }
             }
@@ -190,7 +200,8 @@ public class EditActivity extends AppCompatActivity {
         note.setDesc(noteContent);
         note.setMoney(notemoney);
         note.setCreateTime(noteremindTime);
-        note.setType(spinner.getSelectedItem().toString());
+        note.setReason(spinner.getSelectedItem().toString());
+        note.setType(typeSpinner.getSelectedItem().toString());
         note.setYear(calendar.get(Calendar.YEAR) + "");
         if (flag == 0) {//新建笔记
             noteDao.insertMessage(note);

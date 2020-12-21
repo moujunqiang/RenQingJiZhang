@@ -18,8 +18,10 @@
         </activity>
         <activity
             android:name=".EditActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity android:name=".MessageActivity"/>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".MessageActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
