@@ -14,12 +14,20 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.renqingjizhang.MessageActivity;
 import com.android.renqingjizhang.R;
+import com.android.renqingjizhang.adapter.MessageListAdapter;
+import com.android.renqingjizhang.db.MessageDataBase;
+import com.android.renqingjizhang.db.dao.MessageDao;
+import com.android.renqingjizhang.db.entity.MessageBean;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.CalendarLayout;
 import com.haibin.calendarview.CalendarView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,17 +52,16 @@ public class CalenderFragment extends Fragment implements CalendarView.OnCalenda
     private int mYear;
     CalendarLayout mCalendarLayout;
     RecyclerView mRecyclerView;
-    private NoteListAdapter adapter;
-    private List<NoteBean> notes = new ArrayList<>();
-    private NoteDao noteDao;
+    private MessageListAdapter adapter;
+    private List<MessageBean> messageBeans = new ArrayList<>();
+    private MessageDao messageDao;
     private String login_user;
     private View inflate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         inflate = inflater.inflate(R.layout.fragment_calender, container, false);
-        noteDao = new NoteDao(getContext());
-        login_user = getContext().getSharedPreferences("login", MODE_PRIVATE).getString("login_user", "");
+        messageDao = MessageDataBase.getDatabase(getContext()).getMessageDao();
         initView();
         initData();
         return inflate;
@@ -100,36 +107,44 @@ public class CalenderFragment extends Fragment implements CalendarView.OnCalenda
     }
 
     protected void initData() {
-        List<NoteBean> noteBeans = noteDao.queryNotesAll(login_user, 12);
+        List<MessageBean> messageBeans = messageDao.queryAllMessage();
         Map<String, Calendar> map = new HashMap<>();
 
-        for (int i = 0; i < noteBeans.size(); i++) {
-            String day = noteBeans.get(i).getDay();
-            String text = noteBeans.get(i).getTitle().substring(0, 1);
-            int year = Integer.parseInt(noteBeans.get(i).getYear());
-            int month = Integer.parseInt(noteBeans.get(i).getMonth());
-            map.put(getSchemeCalendar(year, month, Integer.parseInt(day), 0xFF40db25, text).toString(),
-                    getSchemeCalendar(year, month, Integer.parseInt(day), 0xFF40db25, text));
+        for (int i = 0; i < messageBeans.size(); i++) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            MessageBean messageBean = messageBeans.get(i);
+            Date date = null;
+            try {
+                date = sdf.parse(messageBean.getCreateTime());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            map.put(getSchemeCalendar(date.getYear(), date.getMonth(), date.getDay(), 0xFF40db25, messageBean.getName().substring(0, 1)).toString(),
+                    getSchemeCalendar(date.getYear(), date.getMonth(), date.getDay(), 0xFF40db25, messageBean.getName().substring(0, 1)));
         }
         //此方法在巨大的数据量上不影响遍历性能，推荐使用
         mCalendarView.clearSchemeDate();
         mCalendarView.setSchemeDate(map);
         mRecyclerView = (RecyclerView) inflate.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new NoteListAdapter();
-        adapter.setOnItemClickListener(new NoteListAdapter.OnRecyclerViewItemClickListener() {
+        adapter = new MessageListAdapter();
+        adapter.setOnItemClickListener(new MessageListAdapter.OnRecyclerViewItemClickListener() {
             @Override
-            public void onItemClick(View view, NoteBean note) {
-                Intent intent = new Intent(getContext(), NoteActivity.class);
+            public void onItemClick(View view, MessageBean messageBean) {
+                Intent intent = new Intent(getContext(), MessageActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("note", note);
+                bundle.putSerializable("note", messageBean);
                 intent.putExtra("data", bundle);
                 startActivity(intent);
             }
         });
-        notes.clear();
-        notes.addAll(noteDao.queryNotesAllByDate(login_user, 2, mCalendarView.getCurYear() + "", mCalendarView.getCurMonth() + "", mCalendarView.getCurDay() + ""));
-        adapter.setmNotes(notes);
+        messageBeans.clear();
+        String startTime = mCalendarView.getCurYear() + "-" + mCalendarView.getCurMonth() + "-" + mCalendarView.getCurDay() + "";
+        String endTime = mCalendarView.getCurYear() + "-" + mCalendarView.getCurMonth() + "-" + (mCalendarView.getCurDay() + 1) + "";
+
+        messageBeans.addAll(messageDao.queryAllMessage(startTime, endTime));
+        adapter.setmessageBeans(messageBeans);
         mRecyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -141,6 +156,14 @@ public class CalenderFragment extends Fragment implements CalendarView.OnCalenda
         initData();
     }
 
+    public static CalenderFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        CalenderFragment fragment = new CalenderFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     private Calendar getSchemeCalendar(int year, int month, int day, int color, String text) {
         Calendar calendar = new Calendar();
         calendar.setYear(year);
@@ -168,8 +191,12 @@ public class CalenderFragment extends Fragment implements CalendarView.OnCalenda
         mTextYear.setText(String.valueOf(calendar.getYear()));
         mTextLunar.setText(calendar.getLunar());
         mYear = calendar.getYear();
-        notes.clear();
-        notes.addAll(noteDao.queryNotesAllByDate(login_user, 2, calendar.getYear() + "", calendar.getMonth() + "", calendar.getDay() + ""));
+        String startTime = calendar.getYear() + "-" + calendar.getMonth() + "-" + calendar.getDay() + "";
+        String endTime = calendar.getYear() + "-" + calendar.getMonth() + "-" + (calendar.getDay() + 1) + "";
+
+        messageBeans.clear();
+        messageBeans.addAll(messageDao.queryAllMessage(startTime, endTime));
+        adapter.setmessageBeans(messageBeans);
         adapter.notifyDataSetChanged();
     }
 

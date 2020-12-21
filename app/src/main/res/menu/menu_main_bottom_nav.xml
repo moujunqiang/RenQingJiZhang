@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_out"
+        android:icon="@drawable/home_found_selector"
+        android:title="随礼"/>
+
+    <item
+        android:id="@+id/menu_calender"
+        android:icon="@drawable/home_home_selector"
+        android:title="日历"/>
+
+
+    <item
+        android:id="@+id/menu_in"
+        android:icon="@drawable/home_message_selector"
+        android:title="收礼"/>
+</menu>

@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import com.android.myapplication.R;
+import com.android.renqingjizhang.R;
 import com.haibin.calendarview.Calendar;
 import com.haibin.calendarview.WeekBar;
 

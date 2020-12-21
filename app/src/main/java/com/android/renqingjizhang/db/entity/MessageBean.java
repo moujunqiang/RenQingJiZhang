@@ -3,22 +3,43 @@ package com.android.renqingjizhang.db.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.chad.library.adapter.base.entity.node.BaseExpandNode;
+import com.chad.library.adapter.base.entity.node.BaseNode;
+
+import org.jetbrains.annotations.Nullable;
+
+import java.io.PipedReader;
+import java.io.Serializable;
+import java.util.List;
 
 
 @Entity
-public class MessageBean  {
+public class MessageBean  extends BaseExpandNode implements Serializable {
     @PrimaryKey(autoGenerate = true)
-    public static final int OTHER = 1;
-    public static final int MINE = 2;
     private Long id;
-    private String type; //
+    private String type;
     private String reason;
     private String money;
     private String createTime;
+    private String name;
+    private String desc;
+    private String year;
 
+    public String getYear() {
+        return year;
+    }
 
+    public void setYear(String year) {
+        this.year = year;
+    }
 
+    public String getDesc() {
+        return desc;
+    }
 
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     public Long getId() {
         return id;
@@ -28,28 +49,28 @@ public class MessageBean  {
         this.id = id;
     }
 
-    public String getFromName() {
-        return fromName;
+    public String getType() {
+        return type;
     }
 
-    public void setFromName(String fromName) {
-        this.fromName = fromName;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getContent() {
-        return content;
+    public String getReason() {
+        return reason;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
-    public String getToName() {
-        return toName;
+    public String getMoney() {
+        return money;
     }
 
-    public void setToName(String toName) {
-        this.toName = toName;
+    public void setMoney(String money) {
+        this.money = money;
     }
 
     public String getCreateTime() {
@@ -58,5 +79,21 @@ public class MessageBean  {
 
     public void setCreateTime(String createTime) {
         this.createTime = createTime;
+    }
+
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Nullable
+    @Override
+    public List<BaseNode> getChildNode() {
+        return null;
     }
 }
