@@ -75,16 +75,18 @@ public class OutFragment extends Fragment {
         for (int i = 0; i < integers.size(); i++) {
             List<BaseNode> secondNodeList = new ArrayList<>();
             List<MessageBean> messageBeans1 = messageDao.queryAllMessage(integers.get(i) + "");
-            if (messageBeans1.size() == 0) continue;
-            for (int n = 0; n < messageBeans1.size(); n++) {
-                secondNodeList.add(messageBeans1.get(n));
+            if (messageBeans1.size() != 0) {
+                for (int n = 0; n < messageBeans1.size(); n++) {
+                    secondNodeList.add(messageBeans1.get(n));
+                }
+                FirstMode entity = new FirstMode(secondNodeList, integers.get(i) + "", messageBeans1.size() + "");
+
+                // 模拟 默认第0个是展开的
+                entity.setExpanded(i == 0);
+                list.add(entity);
+
             }
-            FirstMode entity = new FirstMode(secondNodeList, integers.get(i) + "", messageBeans1.size() + "");
 
-            // 模拟 默认第0个是展开的
-            entity.setExpanded(i == 0);
-
-            list.add(entity);
         }
         return list;
     }
