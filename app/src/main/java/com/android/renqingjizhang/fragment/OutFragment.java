@@ -1,5 +1,6 @@
 package com.android.renqingjizhang.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -12,13 +13,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.renqingjizhang.MessageActivity;
 import com.android.renqingjizhang.R;
 import com.android.renqingjizhang.adapter.NodeTreeAdapter;
 import com.android.renqingjizhang.bean.FirstMode;
 import com.android.renqingjizhang.db.MessageDataBase;
 import com.android.renqingjizhang.db.dao.MessageDao;
 import com.android.renqingjizhang.db.entity.MessageBean;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.node.BaseNode;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,17 @@ public class OutFragment extends Fragment {
         adapter.setNewInstance(getData());
 
         rvOut.setAdapter(adapter);
+        adapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                MessageBean messageBean = (MessageBean) adapter.getData().get(position);
+                Intent intent = new Intent(getContext(), MessageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("note", messageBean);
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     public List<BaseNode> getData() {
@@ -65,7 +80,7 @@ public class OutFragment extends Fragment {
         for (int i = 0; i < messageBeans.size(); i++) {
             MessageBean messageBean = messageBeans.get(i);
 
-            if (!integers.contains(messageBean.getYear())) {
+            if (!integers.contains(Integer.parseInt(messageBean.getYear()))) {
                 integers.add(Integer.parseInt(messageBean.getYear()));
             }
         }
@@ -79,13 +94,15 @@ public class OutFragment extends Fragment {
                 for (int n = 0; n < messageBeans1.size(); n++) {
                     secondNodeList.add(messageBeans1.get(n));
                 }
-                FirstMode entity = new FirstMode(secondNodeList, integers.get(i) + "", messageBeans1.size() + "");
 
-                // 模拟 默认第0个是展开的
-                entity.setExpanded(i == 0);
-                list.add(entity);
 
             }
+            FirstMode entity = new FirstMode(secondNodeList, integers.get(i) + "", messageBeans1.size() + "");
+
+            // 模拟 默认第0个是展开的
+            entity.setExpanded(i == 0);
+            list.add(entity);
+
 
         }
         return list;

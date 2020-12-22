@@ -23,6 +23,7 @@ import com.android.renqingjizhang.db.MessageDataBase;
 import com.android.renqingjizhang.db.dao.MessageDao;
 import com.android.renqingjizhang.db.entity.MessageBean;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -202,7 +203,10 @@ public class EditActivity extends AppCompatActivity {
         note.setCreateTime(noteremindTime);
         note.setReason(spinner.getSelectedItem().toString());
         note.setType(typeSpinner.getSelectedItem().toString());
-        note.setYear(calendar.get(Calendar.YEAR) + "");
+        if (calendar != null) {
+            note.setYear(calendar.get(Calendar.YEAR) + "");
+
+        }
         if (flag == 0) {//新建笔记
             noteDao.insertMessage(note);
         } else if (flag == 1) {//修改笔记
